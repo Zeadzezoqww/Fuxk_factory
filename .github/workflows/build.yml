@@ -1,0 +1,32 @@
+name: Cluster Build
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: [self-hosted, android-build]
+    steps:
+      - name: Checkout Configs
+        uses: actions/checkout@v4
+
+      - name: Sync AxionAOSP
+        run: |
+          # Initialize the base ROM source
+          repo init -u https://github.com/AxionAOSP/android.git -b main
+          
+          # Inject your manifest
+          mkdir -p .repo/local_manifests
+          cp .repo/local_manifests/tanzanite.xml .repo/local_manifests/tanzanite.xml
+          
+          # Sync all repos across the cluster
+          repo sync -j128
+      
+      - name: Compile ROM
+        run: |
+          # Set up build environment
+          source build/envsetup.sh
+          
+          # Lunch your device target
+          lunch axion_tanzanite-userdebug
+          
+          # Compile (adjust -j threads based on your specific 16-core machine limit)
+          mka -j16
