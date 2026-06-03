@@ -26,7 +26,7 @@ jobs:
           source build/envsetup.sh
           
           # Lunch your device target
-          lunch axion_tanzanite-userdebug
+          axion tanzanite userdebug full
           
           # Compile (adjust -j threads based on your specific 16-core machine limit)
           mka -j16
